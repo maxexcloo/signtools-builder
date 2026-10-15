@@ -45,7 +45,15 @@ jobs:
       - name: Install Fastlane
         run: gem install fastlane --conservative --minimal-deps --no-document --version 2.241.1
       - name: Sign App
+        id: sign
         working-directory: signer
         env:
+          FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
           PYTHONUNBUFFERED: "1"
         run: python3 ../builder/run_signer.py
+      - name: Save Apple Session
+        if: ${{ always() && (steps.sign.outcome == 'success' || steps.sign.outcome == 'failure') }}
+        working-directory: signer
+        env:
+          GH_TOKEN: ${{ secrets.SESSION_STORAGE_TOKEN }}
+        run: python3 ../builder/save_session.py
