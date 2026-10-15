@@ -42,6 +42,8 @@ jobs:
         run: |
           command -v codesign fastlane node python3
           xcrun lipo insert_dylib -verify_arch x86_64
+      - name: Install Fastlane
+        run: gem install fastlane --conservative --minimal-deps --no-document --version 2.241.1
       - name: Sign App
         working-directory: signer
         env:
