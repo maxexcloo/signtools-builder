@@ -5,18 +5,16 @@ permissions:
   contents: read
   id-token: write
 concurrency:
-  group: signing
   cancel-in-progress: false
+  group: signing
 jobs:
   sign:
+    name: Sign
     # The bundled injection helper is an Intel binary.
     runs-on: macos-26-intel
     timeout-minutes: 30
-    env:
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      SECRET_URL: ${{ secrets.SECRET_URL }}
     steps:
-      - name: Check Out Builder Configuration
+      - name: Checkout Builder Configuration
         uses: actions/checkout@v7
         with:
           path: builder
@@ -29,31 +27,32 @@ jobs:
           tags: tag:ephemeral
           version: 1.104.1
       - name: Check Private Connection
+        env:
+          SECRET_URL: ${{ secrets.SECRET_URL }}
         run: curl --fail --show-error --silent "$SECRET_URL" >/dev/null
-      - name: Check Out Signing Tools
+      - name: Checkout Signing Tools
         uses: actions/checkout@v7
         with:
           path: signer
           persist-credentials: false
           ref: 8790863e64148768be9e8320c361411580d52554
           repository: SignTools/SignTools-CI
-      - name: Check Dependencies
-        working-directory: signer
-        run: |
-          command -v codesign fastlane node python3
-          xcrun lipo insert_dylib -verify_arch x86_64
       - name: Install Fastlane
         run: gem install fastlane --conservative --minimal-deps --no-document --version 2.241.1
       - name: Sign App
         id: sign
         working-directory: signer
         env:
+          FASTLANE_OPT_OUT_USAGE: "1"
           FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
+          FASTLANE_SKIP_UPDATE_CHECK: "1"
           PYTHONUNBUFFERED: "1"
-        run: python3 ../builder/run_signer.py
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          SECRET_URL: ${{ secrets.SECRET_URL }}
+        run: python3 ../builder/.github/scripts/run_signer.py
       - name: Save Apple Session
         if: ${{ always() && (steps.sign.outcome == 'success' || steps.sign.outcome == 'failure') }}
         working-directory: signer
         env:
           GH_TOKEN: ${{ secrets.SESSION_STORAGE_TOKEN }}
-        run: python3 ../builder/save_session.py
+        run: python3 ../builder/.github/scripts/save_session.py
