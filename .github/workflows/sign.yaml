@@ -41,7 +41,7 @@ jobs:
         working-directory: signer
         run: |
           command -v codesign fastlane node python3
-          xcrun lipo -verify_arch x86_64 insert_dylib
+          xcrun lipo insert_dylib -verify_arch x86_64
       - name: Sign App
         working-directory: signer
         env:
