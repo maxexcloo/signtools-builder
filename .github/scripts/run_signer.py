@@ -11,7 +11,7 @@ def prepare_source(source):
     replacement = """def read_file(file_path: StrPath):
     with open(file_path) as f:
         value = f.read()
-    if Path(file_path).name in {"account_pass.txt", "cert_pass.txt"} and value:
+    if Path(file_path).name in {"account_2fa.txt", "account_name.txt", "account_pass.txt", "cert_pass.txt", "team_id.txt"} and value:
         escaped = value.replace("%", "%25").replace("\\r", "%0D").replace("\\n", "%0A")
         print("::add-mask::" + escaped, flush=True)
     return value

@@ -1,0 +1,17 @@
+[tools]
+# python = "latest"
+actionlint = "1.7.12"
+prettier = "3.9.10"
+shellcheck = "0.11.0"
+
+[tasks.check]
+description = "Run All Repository Checks"
+run = """
+actionlint .github/workflows/*.yaml
+prettier --check .
+python -m unittest discover -p 'test_*.py' -s tests
+"""
+
+[tasks.fmt]
+description = "Format Project Files"
+run = "prettier --write ."
