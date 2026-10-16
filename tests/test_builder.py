@@ -22,9 +22,17 @@ READER = """def read_file(file_path: StrPath):
 class SignToolsBuilderTests(unittest.TestCase):
     def test_downloaded_credentials_are_masked_before_returning_to_signer(self):
         namespace = {"Path": Path, "StrPath": str}
-        exec(compile(ast.parse(PREPARE(READER)), "sign.py", "exec"), namespace)
+        # Exercise the same patched upstream code that the wrapper executes.
+        exec(compile(ast.parse(PREPARE(READER)), "sign.py", "exec"), namespace)  # noqa: S102
         with tempfile.TemporaryDirectory() as directory:
-            for name in ("account_2fa.txt", "account_name.txt", "account_pass.txt", "cert_pass.txt", "team_id.txt", "args.txt"):
+            for name in (
+                "account_2fa.txt",
+                "account_name.txt",
+                "account_pass.txt",
+                "cert_pass.txt",
+                "team_id.txt",
+                "args.txt",
+            ):
                 with self.subTest(name=name):
                     path = Path(directory) / name
                     path.write_text("fixture%password\nsecond line")
@@ -34,7 +42,8 @@ class SignToolsBuilderTests(unittest.TestCase):
                     self.assertEqual(result, "fixture%password\nsecond line")
                     expected = (
                         "::add-mask::fixture%25password%0Asecond line\n"
-                        if name != "args.txt" else ""
+                        if name != "args.txt"
+                        else ""
                     )
                     self.assertEqual(output.getvalue(), expected)
 
@@ -56,27 +65,45 @@ class AppleSessionTests(unittest.TestCase):
             other = root / "spaceship/other@example.invalid/cookie"
             other.parent.mkdir(parents=True)
             other.write_bytes(b"other-session-cookie")
-            environment = {"GITHUB_REPOSITORY": "fixture/builder", "SPACESHIP_COOKIE_PATH": directory}
+            environment = {
+                "GITHUB_REPOSITORY": "fixture/builder",
+                "SPACESHIP_COOKIE_PATH": directory,
+            }
             for returncode in (0, 1):
-                with self.subTest(returncode=returncode), mock.patch.dict(os.environ, environment):
-                    with mock.patch("subprocess.run") as run, contextlib.redirect_stdout(io.StringIO()) as output:
-                        run.return_value.returncode = returncode
-                        run.return_value.stderr = b"fixture-session-cookie"
-                        if returncode:
-                            with self.assertRaisesRegex(RuntimeError, "Could not save"):
-                                SAVE_SESSION(account)
-                        else:
+                with (
+                    self.subTest(returncode=returncode),
+                    mock.patch.dict(os.environ, environment),
+                    mock.patch("subprocess.run") as run,
+                    contextlib.redirect_stdout(io.StringIO()) as output,
+                ):
+                    run.return_value.returncode = returncode
+                    run.return_value.stderr = b"fixture-session-cookie"
+                    if returncode:
+                        with self.assertRaisesRegex(RuntimeError, "Could not save"):
                             SAVE_SESSION(account)
-                        run.assert_called_once_with(
-                            ["gh", "secret", "set", "FASTLANE_SESSION", "--repo", "fixture/builder"],
-                            capture_output=True,
-                            input=b"fixture-session-cookie",
-                            timeout=30,
-                        )
-                        self.assertNotIn("fixture-session-cookie", output.getvalue())
+                    else:
+                        SAVE_SESSION(account)
+                    run.assert_called_once_with(
+                        [
+                            "gh",
+                            "secret",
+                            "set",
+                            "FASTLANE_SESSION",
+                            "--repo",
+                            "fixture/builder",
+                        ],
+                        check=False,
+                        capture_output=True,
+                        input=b"fixture-session-cookie",
+                        timeout=30,
+                    )
+                    self.assertNotIn("fixture-session-cookie", output.getvalue())
 
     def test_missing_account_or_cookie_does_not_overwrite_the_saved_session(self):
-        with tempfile.TemporaryDirectory() as directory, mock.patch("subprocess.run") as run:
+        with (
+            tempfile.TemporaryDirectory() as directory,
+            mock.patch("subprocess.run") as run,
+        ):
             account = Path(directory) / "account_name.txt"
             with contextlib.redirect_stdout(io.StringIO()):
                 SAVE_SESSION(account)

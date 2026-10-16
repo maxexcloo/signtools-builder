@@ -17,11 +17,17 @@ def prepare_source(source):
     return value
 """
     if source.count(original) != 1:
-        raise RuntimeError("Upstream credential reader changed; review the masking patch")
+        raise RuntimeError(
+            "Upstream credential reader changed; review the masking patch"
+        )
     return source.replace(original, replacement)
 
 
 if __name__ == "__main__":
     signer = Path("sign.py")
     source = prepare_source(signer.read_text())
-    exec(compile(source, str(signer), "exec"), {"__file__": str(signer), "__name__": "__main__"})
+    # Execute the pinned upstream signer after patching its credential reader.
+    exec(  # noqa: S102
+        compile(source, str(signer), "exec"),
+        {"__file__": str(signer), "__name__": "__main__"},
+    )

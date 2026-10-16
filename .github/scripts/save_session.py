@@ -10,13 +10,23 @@ def save_session(account_path=Path("account_name.txt")):
         print("No Apple account was downloaded; no session to save.")
         return
     account = account_path.read_text().strip()
-    cookie_root = Path(os.environ.get("SPACESHIP_COOKIE_PATH", Path.home() / ".fastlane"))
+    cookie_root = Path(
+        os.environ.get("SPACESHIP_COOKIE_PATH", Path.home() / ".fastlane")
+    )
     cookie = cookie_root / "spaceship" / account / "cookie"
     if not cookie.is_file() or not cookie.stat().st_size:
         print("No authenticated Apple session was created; saved session unchanged.")
         return
     result = subprocess.run(
-        ["gh", "secret", "set", "FASTLANE_SESSION", "--repo", os.environ["GITHUB_REPOSITORY"]],
+        [
+            "gh",
+            "secret",
+            "set",
+            "FASTLANE_SESSION",
+            "--repo",
+            os.environ["GITHUB_REPOSITORY"],
+        ],
+        check=False,
         capture_output=True,
         input=cookie.read_bytes(),
         timeout=30,
