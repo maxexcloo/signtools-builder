@@ -39,6 +39,9 @@ include app names, bundle IDs and signing diagnostics.
 
 ## Development
 
+Install the [shared Mise configuration](https://github.com/maxexcloo/dotfiles#shared-tools--tasks)
+before running local Mise tasks.
+
 Install [Mise](https://mise.jdx.dev), then run:
 
 ```sh

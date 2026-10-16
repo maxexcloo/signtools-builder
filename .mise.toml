@@ -1,17 +1,9 @@
-[tools]
-# python = "latest"
-actionlint = "1.7.12"
-prettier = "3.9.10"
-shellcheck = "0.11.0"
+[vars]
+# Native concurrency queues are not recognised by the shared Actionlint version.
+actionlint_args = "-ignore unexpected.key..queue..for..concurrency..section"
 
 [tasks.check]
-description = "Run All Repository Checks"
-run = """
-actionlint .github/workflows/*.yaml
-prettier --check .
-python -m unittest discover -p 'test_*.py' -s tests
-"""
+depends = ["check:actions", "check:prettier", "test:python"]
 
 [tasks.fmt]
-description = "Format Project Files"
-run = "prettier --write ."
+depends = ["fmt:prettier"]

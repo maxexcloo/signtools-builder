@@ -7,6 +7,7 @@ permissions:
 concurrency:
   cancel-in-progress: false
   group: signing
+  queue: max
 jobs:
   sign:
     name: Sign
