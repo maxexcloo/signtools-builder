@@ -3,7 +3,7 @@
 actionlint_args = "-ignore unexpected.key..queue..for..concurrency..section"
 
 [tasks.check]
-depends = ["check:actions", "check:prettier", "check:python", "test:python"]
+depends = ["check:actions", "check:oxfmt", "check:python", "test:python"]
 
 [tasks.fmt]
-depends = ["fmt:prettier", "fmt:python"]
+depends = ["fmt:oxfmt", "fmt:python"]
