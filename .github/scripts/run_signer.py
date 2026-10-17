@@ -12,8 +12,10 @@ def prepare_source(source):
     with open(file_path) as f:
         value = f.read()
     if Path(file_path).name in {"account_2fa.txt", "account_name.txt", "account_pass.txt", "cert_pass.txt", "team_id.txt"} and value:
-        escaped = value.replace("%", "%25").replace("\\r", "%0D").replace("\\n", "%0A")
-        print("::add-mask::" + escaped, flush=True)
+        # Upstream failures render subprocess arguments and output with repr().
+        for mask in (value, repr(value)[1:-1], repr(value.encode())[2:-1]):
+            escaped = mask.replace("%", "%25").replace("\\r", "%0D").replace("\\n", "%0A")
+            print("::add-mask::" + escaped, flush=True)
     return value
 """
     if source.count(original) != 1:

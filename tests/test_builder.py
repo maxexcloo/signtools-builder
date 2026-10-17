@@ -1,11 +1,12 @@
 """Keep signing passwords out of GitHub error logs."""
 
-import ast
 import contextlib
 import io
 import os
 import runpy
+import subprocess
 import tempfile
+import traceback
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -23,7 +24,7 @@ class SignToolsBuilderTests(unittest.TestCase):
     def test_downloaded_credentials_are_masked_before_returning_to_signer(self):
         namespace = {"Path": Path, "StrPath": str}
         # Exercise the same patched upstream code that the wrapper executes.
-        exec(compile(ast.parse(PREPARE(READER)), "sign.py", "exec"), namespace)  # noqa: S102
+        exec(compile(PREPARE(READER), "sign.py", "exec"), namespace)  # noqa: S102
         with tempfile.TemporaryDirectory() as directory:
             for name in (
                 "account_2fa.txt",
@@ -42,10 +43,51 @@ class SignToolsBuilderTests(unittest.TestCase):
                     self.assertEqual(result, "fixture%password\nsecond line")
                     expected = (
                         "::add-mask::fixture%25password%0Asecond line\n"
+                        "::add-mask::fixture%25password\\nsecond line\n"
+                        "::add-mask::fixture%25password\\nsecond line\n"
                         if name != "args.txt"
                         else ""
                     )
                     self.assertEqual(output.getvalue(), expected)
+
+    def test_credential_masks_cover_subprocess_failure_representations(self):
+        namespace = {"Path": Path, "StrPath": str}
+        exec(compile(PREPARE(READER), "sign.py", "exec"), namespace)  # noqa: S102
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "cert_pass.txt"
+            for password in (
+                "fixture'\"password",
+                "fixture\\password",
+                "fixtureépassword",
+            ):
+                with self.subTest(password=password):
+                    path.write_text(password)
+                    output = io.StringIO()
+                    with contextlib.redirect_stdout(output):
+                        value = namespace["read_file"](path)
+                    masks = [
+                        line.removeprefix("::add-mask::")
+                        for line in output.getvalue().splitlines()
+                    ]
+                    failures = (
+                        subprocess.CalledProcessError(
+                            1, ["security", "import", "fixture.p12", "-P", value]
+                        ),
+                        Exception(
+                            f"Error logging in: {{'stderr': {value.encode()!r}}}"
+                        ),
+                    )
+                    for failure in failures:
+                        with self.subTest(failure=type(failure).__name__):
+                            log = "".join(
+                                traceback.format_exception(type(failure), failure, None)
+                            )
+                            for mask in sorted(masks, key=len, reverse=True):
+                                log = log.replace(mask, "***")
+                            self.assertIn("***", log)
+                            self.assertNotIn(password, log)
+                            self.assertNotIn(repr(password)[1:-1], log)
+                            self.assertNotIn(repr(password.encode())[2:-1], log)
 
     def test_upstream_reader_changes_require_review(self):
         for source in ("def read_file(path): pass", READER + READER):
