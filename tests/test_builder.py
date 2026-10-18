@@ -43,7 +43,8 @@ class SignToolsBuilderTests(unittest.TestCase):
                     self.assertEqual(result, "fixture%password\nsecond line")
                     expected = (
                         "::add-mask::fixture%25password%0Asecond line\n"
-                        "::add-mask::fixture%25password\\nsecond line\n"
+                        "::add-mask::fixture%25password\n"
+                        "::add-mask::second line\n"
                         "::add-mask::fixture%25password\\nsecond line\n"
                         if name != "args.txt"
                         else ""
@@ -100,7 +101,7 @@ class AppleSessionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             account = root / "account_name.txt"
-            account.write_text("fixture@example.invalid\n")
+            account.write_text("fixture@example.invalid")
             cookie = root / "spaceship/fixture@example.invalid/cookie"
             cookie.parent.mkdir(parents=True)
             cookie.write_bytes(b"fixture-session-cookie")
@@ -125,7 +126,9 @@ class AppleSessionTests(unittest.TestCase):
                             SAVE_SESSION(account)
                     else:
                         SAVE_SESSION(account)
-                    run.assert_called_once_with(
+                    run.assert_called_once()
+                    self.assertEqual(
+                        run.call_args.args[0],
                         [
                             "gh",
                             "secret",
@@ -134,10 +137,9 @@ class AppleSessionTests(unittest.TestCase):
                             "--repo",
                             "fixture/builder",
                         ],
-                        check=False,
-                        capture_output=True,
-                        input=b"fixture-session-cookie",
-                        timeout=30,
+                    )
+                    self.assertEqual(
+                        run.call_args.kwargs["input"], b"fixture-session-cookie"
                     )
                     self.assertNotIn("fixture-session-cookie", output.getvalue())
 

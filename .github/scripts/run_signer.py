@@ -12,8 +12,10 @@ def prepare_source(source):
     with open(file_path) as f:
         value = f.read()
     if Path(file_path).name in {"account_2fa.txt", "account_name.txt", "account_pass.txt", "cert_pass.txt", "team_id.txt"} and value:
-        # Upstream failures render subprocess arguments and output with repr().
-        for mask in (value, repr(value)[1:-1], repr(value.encode())[2:-1]):
+        # Upstream failures render subprocess arguments and output with repr();
+        # Also mask each line in case a multi-line value is logged line by line.
+        masks = (value, *value.splitlines(), repr(value)[1:-1], repr(value.encode())[2:-1])
+        for mask in dict.fromkeys(filter(None, masks)):
             escaped = mask.replace("%", "%25").replace("\\r", "%0D").replace("\\n", "%0A")
             print("::add-mask::" + escaped, flush=True)
     return value
