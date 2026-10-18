@@ -8,6 +8,7 @@ depends = [
   "check:mise",
   "check:oxfmt",
   "check:python",
+  "check:updates",
   "check:whitespace",
   "test:python",
 ]
