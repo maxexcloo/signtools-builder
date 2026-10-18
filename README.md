@@ -39,16 +39,10 @@ include app names, bundle IDs and signing diagnostics.
 
 ## Development
 
-Install the [shared Mise configuration](https://github.com/maxexcloo/dotfiles#shared-tools--tasks)
-before running local Mise tasks.
+Install [Mise](https://mise.jdx.dev) and the
+[shared configuration](https://github.com/maxexcloo/dotfiles#shared-tools--tasks),
+then run `mise run check`.
 
-Install [Mise](https://mise.jdx.dev), then run:
-
-```sh
-mise install
-mise run check
-```
-
-Pull requests run the validation workflow without signing credentials. The
+Pull requests run the **Check** workflow without signing credentials. The
 signer wrapper fails if its expected upstream credential reader changes, so
 upstream revision updates require review.

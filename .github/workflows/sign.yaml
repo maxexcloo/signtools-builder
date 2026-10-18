@@ -16,12 +16,12 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Checkout Builder Configuration
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: builder
           persist-credentials: false
       - name: Connect To Tailscale
-        uses: tailscale/github-action@v4
+        uses: tailscale/github-action@d1b6cd204f8dceda5b3eaad7f1f767be390056cd # v4.2.0
         with:
           audience: ${{ secrets.TS_AUDIENCE }}
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
@@ -32,7 +32,7 @@ jobs:
           SECRET_URL: ${{ secrets.SECRET_URL }}
         run: curl --fail --show-error --silent "$SECRET_URL" >/dev/null
       - name: Checkout Signing Tools
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: signer
           persist-credentials: false
