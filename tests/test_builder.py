@@ -101,7 +101,7 @@ class AppleSessionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             account = root / "account_name.txt"
-            account.write_text("fixture@example.invalid\n")
+            account.write_text("fixture@example.invalid")
             cookie = root / "spaceship/fixture@example.invalid/cookie"
             cookie.parent.mkdir(parents=True)
             cookie.write_bytes(b"fixture-session-cookie")

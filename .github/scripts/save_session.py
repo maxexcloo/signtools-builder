@@ -9,7 +9,8 @@ def save_session(account_path=Path("account_name.txt")):
     if not account_path.is_file():
         print("No Apple account was downloaded; no session to save.")
         return
-    account = account_path.read_text().strip()
+    # Match the unstripped account name upstream passes to Fastlane.
+    account = account_path.read_text()
     cookie_root = Path(
         os.environ.get("SPACESHIP_COOKIE_PATH", Path.home() / ".fastlane")
     )
