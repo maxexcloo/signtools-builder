@@ -126,7 +126,9 @@ class AppleSessionTests(unittest.TestCase):
                             SAVE_SESSION(account)
                     else:
                         SAVE_SESSION(account)
-                    run.assert_called_once_with(
+                    run.assert_called_once()
+                    self.assertEqual(
+                        run.call_args.args[0],
                         [
                             "gh",
                             "secret",
@@ -135,10 +137,9 @@ class AppleSessionTests(unittest.TestCase):
                             "--repo",
                             "fixture/builder",
                         ],
-                        check=False,
-                        capture_output=True,
-                        input=b"fixture-session-cookie",
-                        timeout=30,
+                    )
+                    self.assertEqual(
+                        run.call_args.kwargs["input"], b"fixture-session-cookie"
                     )
                     self.assertNotIn("fixture-session-cookie", output.getvalue())
 
