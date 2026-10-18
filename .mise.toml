@@ -1,7 +1,3 @@
-[vars]
-# Remove once Actionlint recognises native concurrency queues.
-actionlint_args = "-ignore 'unexpected key \"queue\" for \"concurrency\" section'"
-
 [tasks.check]
 depends = [
   "check:actions",
