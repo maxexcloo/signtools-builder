@@ -43,7 +43,8 @@ class SignToolsBuilderTests(unittest.TestCase):
                     self.assertEqual(result, "fixture%password\nsecond line")
                     expected = (
                         "::add-mask::fixture%25password%0Asecond line\n"
-                        "::add-mask::fixture%25password\\nsecond line\n"
+                        "::add-mask::fixture%25password\n"
+                        "::add-mask::second line\n"
                         "::add-mask::fixture%25password\\nsecond line\n"
                         if name != "args.txt"
                         else ""
