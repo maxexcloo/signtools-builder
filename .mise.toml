@@ -1,6 +1,6 @@
 [vars]
-# Native concurrency queues are not recognised by the shared Actionlint version.
-actionlint_args = "-ignore unexpected.key..queue..for..concurrency..section"
+# Remove once Actionlint recognises native concurrency queues.
+actionlint_args = "-ignore 'unexpected key \"queue\" for \"concurrency\" section'"
 
 [tasks.check]
 depends = ["check:actions", "check:oxfmt", "check:python", "test:python"]
