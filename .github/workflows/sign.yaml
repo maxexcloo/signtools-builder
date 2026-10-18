@@ -39,6 +39,7 @@ jobs:
           ref: 8790863e64148768be9e8320c361411580d52554
           repository: SignTools/SignTools-CI
       - name: Install Fastlane
+        # Pinned: bumps require re-reviewing upstream credential handling.
         run: gem install fastlane --conservative --minimal-deps --no-document --version 2.241.1
       - name: Sign App
         id: sign
