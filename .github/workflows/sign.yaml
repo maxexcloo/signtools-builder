@@ -36,10 +36,12 @@ jobs:
         with:
           path: signer
           persist-credentials: false
+          # renovate: datasource=git-refs depName=https://github.com/SignTools/SignTools-CI
           ref: 8790863e64148768be9e8320c361411580d52554
           repository: SignTools/SignTools-CI
       - name: Install Fastlane
         # Pinned: bumps require re-reviewing upstream credential handling.
+        # renovate: datasource=rubygems depName=fastlane
         run: gem install fastlane --conservative --minimal-deps --no-document --version 2.241.1
       - name: Sign App
         id: sign
