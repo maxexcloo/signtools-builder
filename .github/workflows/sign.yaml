@@ -1,13 +1,17 @@
 name: Sign
+
 on:
   workflow_dispatch:
+
 permissions:
   contents: read
   id-token: write
+
 concurrency:
   cancel-in-progress: false
   group: signing
   queue: max
+
 jobs:
   sign:
     name: Sign
@@ -28,9 +32,9 @@ jobs:
           tags: tag:ephemeral
           version: latest
       - name: Check Private Connection
+        run: curl --fail --show-error --silent "$SECRET_URL" >/dev/null
         env:
           SECRET_URL: ${{ secrets.SECRET_URL }}
-        run: curl --fail --show-error --silent "$SECRET_URL" >/dev/null
       - name: Checkout Signing Tools
         uses: actions/checkout@v7
         with:
@@ -43,8 +47,9 @@ jobs:
         # Pinned: bumps require re-reviewing upstream credential handling.
         # renovate: datasource=rubygems depName=fastlane
         run: gem install fastlane --conservative --minimal-deps --no-document --version 2.241.1
-      - name: Sign App
-        id: sign
+      - id: sign
+        name: Sign App
+        run: python3 ../builder/.github/scripts/run_signer.py
         working-directory: signer
         env:
           FASTLANE_OPT_OUT_USAGE: "1"
@@ -53,10 +58,9 @@ jobs:
           PYTHONUNBUFFERED: "1"
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           SECRET_URL: ${{ secrets.SECRET_URL }}
-        run: python3 ../builder/.github/scripts/run_signer.py
-      - name: Save Apple Session
-        if: ${{ always() && (steps.sign.outcome == 'success' || steps.sign.outcome == 'failure') }}
+      - if: ${{ always() && (steps.sign.outcome == 'success' || steps.sign.outcome == 'failure') }}
+        name: Save Apple Session
+        run: python3 ../builder/.github/scripts/save_session.py
         working-directory: signer
         env:
           GH_TOKEN: ${{ secrets.SESSION_STORAGE_TOKEN }}
-        run: python3 ../builder/.github/scripts/save_session.py
