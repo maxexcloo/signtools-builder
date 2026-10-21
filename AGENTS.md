@@ -2,13 +2,13 @@
 
 ## Secrets
 
-- Mask every downloaded credential before the upstream signer can log it.
 - Give `SESSION_STORAGE_TOKEN` only to the session-saving step.
 - Keep secrets out of `check.yaml` and keep the `pull_request` trigger off the
   Sign workflow.
 - Never cache or upload signing files as artefacts.
-- Suppress signer output and keep Tailscale quiet. Delete completed Sign logs
-  through the separate cleanup workflow, including failed and cancelled runs.
+- Suppress both signer stdout and stderr and keep Tailscale quiet. Delete
+  completed Sign logs through the separate cleanup workflow, including failed
+  and cancelled runs.
 
 ## Structure
 
@@ -17,7 +17,6 @@
 - Keep custom code in `.github/scripts/`.
 - Execute upstream SignTools-CI only at the pinned commit. When bumping it or the
   Fastlane version, re-review upstream credential reads and error formatting.
-- Keep the signer patch failing on any upstream mismatch.
 
 ## Verification
 
