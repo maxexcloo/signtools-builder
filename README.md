@@ -11,9 +11,9 @@ the **Sign** workflow. Starting or rerunning the workflow directly does not crea
 a signing job.
 
 The workflow uses an Intel macOS runner because of the upstream injection
-helper. It masks downloaded credentials, suppresses signer output, turns off
-Fastlane telemetry and update checks, and keeps signing files out of caches and
-artefacts. Review signing results in SignTools.
+helper. It suppresses signer output, turns off Fastlane telemetry and update
+checks, and keeps signing files out of caches and artefacts. Review signing
+results in SignTools.
 
 ## Secrets
 
@@ -47,6 +47,6 @@ Install [Mise](https://mise.jdx.dev) and the
 [shared configuration](https://github.com/maxexcloo/dotfiles#shared-tools--tasks),
 then run `mise run check`.
 
-Pull requests run the **Check** workflow without signing credentials. The signer
-wrapper fails if the upstream credential reader it expects changes, so upstream
-revision updates need review.
+Pull requests run the **Check** workflow without signing credentials. Upstream
+revision and Fastlane updates need a review of credential handling and error
+formatting.
