@@ -7,6 +7,8 @@
 - Keep secrets out of `check.yaml` and keep the `pull_request` trigger off the
   Sign workflow.
 - Never cache or upload signing files as artefacts.
+- Suppress signer output and keep Tailscale quiet. Delete completed Sign logs
+  through the separate cleanup workflow, including failed and cancelled runs.
 
 ## Structure
 

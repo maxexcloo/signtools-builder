@@ -11,8 +11,9 @@ the **Sign** workflow. Starting or rerunning the workflow directly does not crea
 a signing job.
 
 The workflow uses an Intel macOS runner because of the upstream injection
-helper. It masks downloaded credentials, turns off Fastlane telemetry and update
-checks, and keeps signing files out of caches and artefacts.
+helper. It masks downloaded credentials, suppresses signer output, turns off
+Fastlane telemetry and update checks, and keeps signing files out of caches and
+artefacts. Review signing results in SignTools.
 
 ## Secrets
 
@@ -33,9 +34,12 @@ The Tailscale identity must authorise this repository's `main` branch and
 The first signing request needs Apple 2FA through SignTools. Later requests
 reuse the saved session until Apple expires it, and the next sign-in refreshes the
 secret. Only the session-saving step gets the storage token. The saved session
-stays a private repository secret even if the repository is public. Actions logs
-in a public repository are public too, and can include app names, bundle IDs and
-signing diagnostics.
+stays a private repository secret even if the repository is public. Tailscale
+runs in quiet mode, and connection failures use a generic message. A separate
+workflow deletes each Sign run's logs after it completes, including failed and
+cancelled runs. Actions logs are public while a run is active and until cleanup
+finishes; action failures can still emit diagnostics during that window. If
+cleanup fails, its workflow must be rerun or the Sign logs deleted manually.
 
 ## Development
 

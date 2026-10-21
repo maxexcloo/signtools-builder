@@ -28,11 +28,16 @@ jobs:
         uses: tailscale/github-action@v4
         with:
           audience: ${{ secrets.TS_AUDIENCE }}
+          log-mode: quiet
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           tags: tag:ephemeral
           version: latest
       - name: Check Private Connection
-        run: curl --fail --show-error --silent "$SECRET_URL" >/dev/null
+        run: |
+          if ! curl --fail --silent "$SECRET_URL" >/dev/null 2>&1; then
+            echo '::error::Could not reach the private SignTools server.'
+            exit 1
+          fi
         env:
           SECRET_URL: ${{ secrets.SECRET_URL }}
       - name: Checkout Signing Tools
@@ -49,7 +54,14 @@ jobs:
         run: gem install fastlane --conservative --minimal-deps --no-document --version 2.241.1
       - id: sign
         name: Sign App
-        run: python3 ../builder/.github/scripts/run_signer.py
+        # Upstream diagnostics can contain account and app details.
+        run: |
+          if python3 ../builder/.github/scripts/run_signer.py >/dev/null 2>&1; then
+            echo 'Signing completed.'
+          else
+            echo '::error::Signing failed; review the job in SignTools.'
+            exit 1
+          fi
         working-directory: signer
         env:
           FASTLANE_OPT_OUT_USAGE: "1"
