@@ -1,0 +1,23 @@
+name: Remove Signing Logs
+
+on:
+  workflow_run:
+    types:
+      - completed
+    workflows:
+      - Sign
+
+permissions:
+  actions: write
+
+jobs:
+  remove-logs:
+    name: Remove Signing Logs
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Remove Completed Run Logs
+        run: gh api --method DELETE "repos/$GITHUB_REPOSITORY/actions/runs/$SIGN_RUN_ID/logs"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SIGN_RUN_ID: ${{ github.event.workflow_run.id }}
