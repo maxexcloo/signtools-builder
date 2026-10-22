@@ -19,11 +19,6 @@ jobs:
     runs-on: macos-26-intel
     timeout-minutes: 30
     steps:
-      - name: Checkout Builder Configuration
-        uses: actions/checkout@v7
-        with:
-          path: builder
-          persist-credentials: false
       - name: Connect To Tailscale
         uses: tailscale/github-action@v4
         with:
@@ -32,18 +27,9 @@ jobs:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           tags: tag:ephemeral
           version: latest
-      - name: Check Private Connection
-        run: |
-          if ! curl --fail --silent "$SECRET_URL" >/dev/null 2>&1; then
-            echo '::error::Could not reach the private SignTools server.'
-            exit 1
-          fi
-        env:
-          SECRET_URL: ${{ secrets.SECRET_URL }}
       - name: Checkout Signing Tools
         uses: actions/checkout@v7
         with:
-          path: signer
           persist-credentials: false
           # renovate: datasource=git-refs depName=https://github.com/SignTools/SignTools-CI
           ref: 8790863e64148768be9e8320c361411580d52554
@@ -52,8 +38,7 @@ jobs:
         # Pinned: bumps require re-reviewing upstream credential handling.
         # renovate: datasource=rubygems depName=fastlane
         run: gem install fastlane --conservative --minimal-deps --no-document --version 2.241.1
-      - id: sign
-        name: Sign App
+      - name: Sign App
         # Upstream diagnostics can contain account and app details.
         run: |
           if python3 sign.py >/dev/null 2>&1; then
@@ -62,17 +47,20 @@ jobs:
             echo '::error::Signing failed; review the job in SignTools.'
             exit 1
           fi
-        working-directory: signer
         env:
           FASTLANE_OPT_OUT_USAGE: "1"
           FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
           FASTLANE_SKIP_UPDATE_CHECK: "1"
-          PYTHONUNBUFFERED: "1"
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           SECRET_URL: ${{ secrets.SECRET_URL }}
-      - if: ${{ always() && (steps.sign.outcome == 'success' || steps.sign.outcome == 'failure') }}
+      - if: ${{ !cancelled() }}
         name: Save Apple Session
-        run: python3 ../builder/.github/scripts/save_session.py
-        working-directory: signer
+        # The ephemeral runner holds at most one signed-in account.
+        run: |
+          cookie=$(echo "$HOME"/.fastlane/spaceship/*/cookie)
+          if [ -s "$cookie" ]; then
+            gh secret set FASTLANE_SESSION --repo "$GITHUB_REPOSITORY" < "$cookie" >/dev/null
+            echo 'Apple session saved.'
+          fi
         env:
           GH_TOKEN: ${{ secrets.SESSION_STORAGE_TOKEN }}
