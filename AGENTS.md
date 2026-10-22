@@ -14,7 +14,6 @@
 
 - Run Sign only through SignTools dispatch on an Intel macOS runner; the
   upstream injection helper requires it.
-- Keep custom code in `.github/scripts/`.
 - Execute upstream SignTools-CI only at the pinned commit. When bumping it or the
   Fastlane version, re-review upstream credential reads and error formatting.
 
