@@ -11,9 +11,8 @@ the **Sign** workflow. Starting or rerunning the workflow directly does not crea
 a signing job.
 
 The workflow uses an Intel macOS runner because of the upstream injection
-helper. It suppresses signer output, turns off Fastlane telemetry and update
-checks, and keeps signing files out of caches and artefacts. Review signing
-results in SignTools.
+helper. It suppresses signer output and turns off Fastlane telemetry and update
+checks. Review signing results in SignTools.
 
 ## Secrets
 
