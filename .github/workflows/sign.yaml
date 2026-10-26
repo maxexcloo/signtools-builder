@@ -36,7 +36,7 @@ jobs:
           repository: SignTools/SignTools-CI
       - name: Install Fastlane
         # renovate: datasource=rubygems depName=fastlane
-        run: gem install fastlane --conservative --minimal-deps --no-document --version 2.241.1
+        run: gem install fastlane --conservative --minimal-deps --no-document --version 2.241.2
       - name: Sign App
         # Upstream diagnostics can contain account and app details.
         run: |
