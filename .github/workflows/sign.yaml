@@ -32,7 +32,7 @@ jobs:
         with:
           persist-credentials: false
           # renovate: datasource=git-refs depName=https://github.com/SignTools/SignTools-CI
-          ref: 6b8a60f4fe3676d3bc9c9c2f2de343055b25431a
+          ref: 8790863e64148768be9e8320c361411580d52554
           repository: SignTools/SignTools-CI
       - name: Install Fastlane
         # renovate: datasource=rubygems depName=fastlane
