@@ -10,9 +10,7 @@ Start signing from the SignTools web interface. It queues the job and dispatches
 the **Sign** workflow. Starting or rerunning the workflow directly does not create
 a signing job.
 
-The workflow uses an Intel macOS runner because of the upstream injection
-helper. It suppresses signer output and turns off Fastlane telemetry and update
-checks. Review signing results in SignTools.
+Review signing results in SignTools.
 
 ## Secrets
 
