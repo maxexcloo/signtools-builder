@@ -14,7 +14,7 @@ Review signing results in SignTools.
 
 ## Secrets
 
-Set these repository secrets; the workflow maintains `FASTLANE_SESSION` itself:
+Set these repository secrets:
 
 | Secret                  | Purpose                                                |
 | ----------------------- | ------------------------------------------------------ |
