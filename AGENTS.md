@@ -7,9 +7,8 @@
   Sign workflow.
 - Never cache or upload signing files as artefacts.
 - Suppress signer stdout and stderr, except `sign.py` traceback function names
-  and line numbers, and keep Tailscale quiet. Delete
-  completed Sign logs through the separate cleanup workflow, including failed
-  and cancelled runs.
+  and line numbers, and keep Tailscale quiet. Delete completed Sign logs through
+  the separate cleanup workflow, including failed and cancelled runs.
 
 ## Structure
 
