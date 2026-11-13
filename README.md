@@ -36,6 +36,5 @@ the **Remove Signing Logs** workflow.
 
 ## Development
 
-Install [Mise](https://mise.jdx.dev) and the
-[shared configuration](https://github.com/maxexcloo/dotfiles#shared-tools--tasks),
-then run `mise run check`.
+Install the [shared Mise configuration](https://github.com/maxexcloo/dotfiles#shared-tools--tasks)
+before running local Mise tasks.

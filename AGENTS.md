@@ -18,6 +18,5 @@
 
 ## Verification
 
-- Run `mise run check`.
 - Live verification requires a signing job started from the SignTools web
   interface.
