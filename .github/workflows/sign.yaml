@@ -37,9 +37,7 @@ jobs:
         # renovate: datasource=rubygems depName=fastlane
         run: gem install fastlane --conservative --minimal-deps --no-document --version 2.241.2
       - name: Sign App
-        # Upstream diagnostics can contain account and app details, so report only
-        # the traceback's sign.py functions and lines in the annotation, which
-        # outlives log removal.
+        # The error annotation outlives log removal.
         run: |
           if python3 sign.py >/dev/null 2>"$RUNNER_TEMP/signer.log"; then
             echo 'Signing completed.'
