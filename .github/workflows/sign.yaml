@@ -24,7 +24,7 @@ jobs:
           audience: ${{ secrets.TS_AUDIENCE }}
           log-mode: quiet
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-          tags: tag:ephemeral
+          tags: tag:ci
           version: latest
       - name: Checkout Signing Tools
         uses: actions/checkout@v7
