@@ -3,8 +3,8 @@
   extends: ["github>maxexcloo/dotfiles//renovate/default.json5"],
   packageRules: [
     {
-      description: "Signer updates need the upstream credential review in AGENTS.md, so merge them by hand",
       automerge: false,
+      description: "Signer updates need the upstream credential review in AGENTS.md, so merge them by hand",
       groupName: null,
       matchPackageNames: ["fastlane", "https://github.com/SignTools/SignTools-CI"],
     },

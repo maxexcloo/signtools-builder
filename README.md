@@ -26,7 +26,7 @@ Set these repository secrets:
 | `TS_OAUTH_CLIENT_ID`    | Tailscale federated identity client ID                 |
 
 The Tailscale identity must authorise this repository's `main` branch and
-`tag:ephemeral`, with access to the private SignTools server.
+`tag:ci`, with access to the private SignTools server.
 
 The first signing request needs Apple 2FA through SignTools. Later requests
 reuse the saved session until Apple expires it.
