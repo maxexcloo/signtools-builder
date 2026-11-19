@@ -18,18 +18,18 @@ Set these repository secrets:
 
 | Secret                  | Purpose                                                |
 | ----------------------- | ------------------------------------------------------ |
-| `FASTLANE_SESSION`      | Apple session saved automatically after authentication |
 | `SECRET_KEY`            | Builder authentication key set by SignTools            |
 | `SECRET_URL`            | Server URL set by SignTools                            |
 | `SESSION_STORAGE_TOKEN` | Repository-scoped token with Secrets read/write access |
 | `TS_AUDIENCE`           | Tailscale federated identity audience                  |
 | `TS_OAUTH_CLIENT_ID`    | Tailscale federated identity client ID                 |
 
-The Tailscale identity must authorise this repository's `main` branch and
-`tag:ci`, with access to the private SignTools server.
+The Tailscale identity must authorise this repository's `main` branch and the
+`tags` value under **Connect To Tailscale** in the [Sign workflow](.github/workflows/sign.yaml).
+The tag needs access to the private SignTools server.
 
-The first signing request needs Apple 2FA through SignTools. Later requests
-reuse the saved session until Apple expires it.
+The first signing request needs Apple 2FA through SignTools. The workflow saves
+the session as `FASTLANE_SESSION` and reuses it until Apple expires it.
 
 Each Sign run's logs are deleted when it completes. If that cleanup fails, rerun
 the **Remove Signing Logs** workflow.

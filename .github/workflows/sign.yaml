@@ -43,7 +43,7 @@ jobs:
             echo 'Signing completed.'
           else
             frames=$(sed -nE 's/^  File "[^"]*\/sign\.py", line ([0-9]+), in ([A-Za-z_<>][A-Za-z0-9_<>]*)$/\2:\1/p' "$RUNNER_TEMP/signer.log" | paste -sd ' ' -)
-            echo "::error::Signing failed in ${frames:-an unknown location}; review the job in SignTools."
+            echo "::error::Signing failed in ${frames:-an unknown location}."
             exit 1
           fi
         env:
