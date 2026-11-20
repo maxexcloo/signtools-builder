@@ -7,6 +7,9 @@
       description: "Signer updates need the upstream credential review in AGENTS.md, so merge them by hand",
       groupName: null,
       matchPackageNames: ["fastlane", "https://github.com/SignTools/SignTools-CI"],
+      prBodyNotes: [
+        "**Review before merge:** re-read upstream credential reads and error formatting as AGENTS.md requires, then record the outcome here before merging.",
+      ],
     },
   ],
 }
